@@ -1,15 +1,4 @@
-<script lang="ts" setup>
-import { Input } from '@/components/ui/input'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <nav class="flex items-center justify-between h-16 px-6 border-b bg-muted/40">

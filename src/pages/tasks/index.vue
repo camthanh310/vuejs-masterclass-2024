@@ -1,20 +1,22 @@
 <script lang="ts" setup>
-import { h, ref } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import type { ColumnDef } from '@tanstack/vue-table'
 import type { Tables } from '@database/types'
-import DataTable from '@/components/ui/data-table/DataTable.vue'
 import { RouterLink } from 'vue-router'
 
+usePageStore().pageData.title = 'My Tasks'
+
 const tasks = ref<Tables<'tasks'>[] | null>(null)
-;(async () => {
+async function getTasks() {
   const { data, error } = await supabase.from('tasks').select()
   if (error) {
     console.log(error)
   }
 
   tasks.value = data
-})()
+}
+
+await getTasks()
 
 const columns: ColumnDef<Tables<'tasks'>>[] = [
   {
