@@ -1,23 +1,37 @@
 <script lang="ts" setup>
-defineProps<{
+const props = defineProps<{
   message: string
   customCode: number
   code: string
   statusCode: number
   hint: string | null
   details: string
-  isCustomError?: boolean
+  isCustomError: boolean
 }>()
+
+const error = ref({
+  code: 500,
+  msg: 'Ops, something went wrong!',
+})
+
+if (props.isCustomError) {
+  error.value.code = props.customCode
+  error.value.msg = props.message
+}
+
+if (props.statusCode === 406) {
+  error.value.code = 404
+  error.value.msg = "Sorry, we couldn't find this page"
+}
 </script>
 
 <template>
   <div>
     <iconify-icon icon="lucide:triangle-alert" class="error__icon" />
-    <h1 class="error__code">{{ customCode || code }}</h1>
-    <p class="error__code" v-if="statusCode">Status Code: {{ statusCode }}</p>
-    <p class="error__msg">{{ message }}</p>
-    <p v-if="hint">{{ hint }}</p>
-    <p v-if="details">{{ details }}</p>
+    <h1 class="error__code">{{ error.code }}</h1>
+
+    <p class="error__msg">{{ error.msg }}</p>
+
     <div class="error-footer">
       <p class="error-footer__text">You'll find lots to explore on the home page.</p>
       <RouterLink to="/">
