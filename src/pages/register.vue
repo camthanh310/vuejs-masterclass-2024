@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { supabase } from '@/lib/supabaseClient'
 
+const router = useRouter()
+
 const formData = ref({
   username: '',
   firstName: '',
@@ -20,7 +22,19 @@ async function signup() {
     return console.log(error)
   }
 
-  console.log(data)
+  if (data.user) {
+    const { error } = await supabase.from('profiles').insert({
+      id: data.user.id,
+      username: formData.value.username,
+      full_name: formData.value.firstName.concat(' ', formData.value.lastName),
+    })
+
+    if (error) {
+      console.log('Profiles err: ', error)
+    }
+  }
+
+  router.push('/')
 }
 </script>
 
