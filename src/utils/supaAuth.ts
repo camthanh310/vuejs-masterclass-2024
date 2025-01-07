@@ -25,7 +25,7 @@ export async function register(formData: RegisterForm) {
     }
   }
 
-  authStore.setAuth(data.session)
+  await authStore.setAuth(data.session)
   return true
 }
 
@@ -39,6 +39,6 @@ export async function login(formData: LoginForm) {
     return console.log(error)
   }
 
-  authStore.setAuth(data.session)
+  await authStore.setAuth(data.session)
   return true
 }
