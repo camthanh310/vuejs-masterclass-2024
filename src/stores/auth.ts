@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabaseClient'
 import { profileQuery } from '@/utils/supaQueries'
 import type { Tables } from '@database/types'
 import type { Session, User } from '@supabase/supabase-js'
@@ -29,10 +30,18 @@ export const useAuthStore = defineStore('auth-store', () => {
     }
   }
 
+  async function getSession() {
+    const { data } = await supabase.auth.getSession()
+    if (data.session?.user) {
+      await setAuth(data.session)
+    }
+  }
+
   return {
     user,
     profile,
     setAuth,
+    getSession,
   }
 })
 
