@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { supabase } from '@/lib/supabaseClient'
+import { login } from '@/utils/supaAuth'
 
 const router = useRouter()
 
@@ -9,16 +9,11 @@ const formData = ref({
 })
 
 async function sigin() {
-  const { error } = await supabase.auth.signInWithPassword({
-    email: formData.value.email,
-    password: formData.value.password,
-  })
+  const isLoggedIn = await login(formData.value)
 
-  if (error) {
-    return console.log(error)
+  if (isLoggedIn) {
+    router.replace('/')
   }
-
-  router.replace('/')
 }
 </script>
 
