@@ -34,7 +34,7 @@ async function signup() {
     }
   }
 
-  router.push('/')
+  router.replace('/')
 }
 </script>
 
