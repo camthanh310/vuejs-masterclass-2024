@@ -33,6 +33,13 @@ const accountLinks = [
     icon: 'lucide:log-out',
   },
 ]
+
+async function executeAction(linkTitle: string) {
+  if (linkTitle === 'Sign Out') {
+    const { logout } = await import('@/utils/supaAuth')
+    await logout()
+  }
+}
 </script>
 
 <template>
@@ -55,7 +62,7 @@ const accountLinks = [
       </div>
 
       <div class="py-3 text-center border-y bg-background">
-        <SidebarLinks :links="accountLinks" />
+        <SidebarLinks :links="accountLinks" @action-clicked="executeAction" />
       </div>
     </nav>
   </aside>
