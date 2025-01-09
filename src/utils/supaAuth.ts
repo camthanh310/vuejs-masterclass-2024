@@ -31,11 +31,7 @@ export async function login(formData: LoginForm) {
     password: formData.password,
   })
 
-  if (error) {
-    return console.log(error)
-  }
-
-  return true
+  return { error }
 }
 
 export async function logout() {
