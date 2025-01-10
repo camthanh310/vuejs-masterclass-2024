@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { login } from '@/utils/supaAuth'
+import { watchDebounced } from '@vueuse/core'
 
 const router = useRouter()
 
@@ -9,6 +10,17 @@ const formData = ref({
 })
 
 const { serverError, handleServerError, realtimeErrors, handleLoginForm } = useFormErrors()
+
+watchDebounced(
+  formData,
+  () => {
+    handleLoginForm(formData.value)
+  },
+  {
+    debounce: 1000,
+    deep: true,
+  },
+)
 
 async function sigin() {
   const { error } = await login(formData.value)
@@ -42,7 +54,6 @@ async function sigin() {
               required
               v-model="formData.email"
               :class="{ 'border-red-500': serverError }"
-              @input="handleLoginForm(formData)"
             />
             <ul class="text-sm text-left text-red-500" v-if="realtimeErrors?.email.length">
               <li v-for="error in realtimeErrors.email" :key="error" class="list-disc">
