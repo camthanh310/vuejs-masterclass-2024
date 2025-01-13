@@ -1,6 +1,6 @@
 import pluginVue from 'eslint-plugin-vue'
 import vueTsEslintConfig from '@vue/eslint-config-typescript'
-import skipFormatting, { rules } from '@vue/eslint-config-prettier/skip-formatting'
+import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
 export default [
   {
@@ -12,13 +12,12 @@ export default [
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
-
   ...pluginVue.configs['flat/essential'],
-  ...vueTsEslintConfig(),
-  skipFormatting,
   {
     rules: {
       'vue/multi-word-component-names': 0,
     },
   },
+  ...vueTsEslintConfig(),
+  skipFormatting,
 ]
