@@ -13,6 +13,21 @@ export const useProjectsStore = defineStore('projects-store', () => {
     }
 
     projects.value = data
+
+    validateCache()
+  }
+
+  function validateCache() {
+    if (projects.value?.length) {
+      projectsQuery.then(({ data }) => {
+        if (JSON.stringify(projects.value) === JSON.stringify(data)) {
+          console.log('Cached and fresh data matched!')
+        } else {
+          console.log('Something has changed!')
+          loadProjects.delete('projects')
+        }
+      })
+    }
   }
 
   return {
