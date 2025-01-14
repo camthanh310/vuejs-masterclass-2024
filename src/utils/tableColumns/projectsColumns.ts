@@ -32,7 +32,7 @@ export const columns = (collabs: Ref<GroupedCollabs>): ColumnDef<Projects[0]>[] 
     cell: ({ row }) => {
       return h(
         'div',
-        { class: 'text-left font-medium' },
+        { class: 'text-left font-medium h-20 flex items-center' },
         collabs.value[row.original.id]
           ? collabs.value[row.original.id].map((collab) => {
               return h(RouterLink, { to: `/users/${collab.username}` }, () => {
