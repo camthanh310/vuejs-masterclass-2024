@@ -2,11 +2,18 @@ import { projectQuery, projectsQuery, type Project, type Projects } from '@/util
 import { useMemoize } from '@vueuse/core'
 
 export const useProjectsStore = defineStore('projects-store', () => {
-  const projects = ref<Projects>([])
-  const project = ref<Project>()
+  const projects = ref<Projects | null>(null)
+  const project = ref<Project | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const loadProjects = useMemoize(async (key: string) => await projectsQuery)
   const loadProject = useMemoize(async (slug: string) => await projectQuery(slug))
+
+  interface ValidateCacheParams {
+    ref: typeof projects | typeof project
+    query: typeof projectsQuery | typeof projectQuery
+    key: string
+    loaderFn: typeof loadProjects | typeof loadProject
+  }
 
   async function getProjects() {
     const { data, error, status } = await loadProjects('projects')
@@ -19,7 +26,12 @@ export const useProjectsStore = defineStore('projects-store', () => {
       projects.value = data
     }
 
-    validateCache()
+    validateCache({
+      ref: projects,
+      query: projectQuery,
+      key: 'projects',
+      loaderFn: loadProjects,
+    })
   }
 
   async function getProject(slug: string) {
@@ -32,17 +44,26 @@ export const useProjectsStore = defineStore('projects-store', () => {
     if (data) {
       project.value = data
     }
+
+    validateCache({
+      ref: project,
+      query: projectQuery,
+      key: slug,
+      loaderFn: loadProject,
+    })
   }
 
-  function validateCache() {
-    if (projects.value?.length) {
-      projectsQuery.then(({ data, error }) => {
+  function validateCache({ ref, query, key, loaderFn }: ValidateCacheParams) {
+    if (ref.value) {
+      const finalQuery = typeof query === 'function' ? query(key) : query
+
+      finalQuery.then(({ data, error }) => {
         if (JSON.stringify(projects.value) === JSON.stringify(data)) {
           //
         } else {
-          loadProjects.delete('projects')
+          loaderFn.delete(key)
           if (!error && data) {
-            projects.value = data
+            ref.value = data
           }
         }
       })
