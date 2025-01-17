@@ -13,6 +13,12 @@ watch(
 )
 
 await getProject(slug)
+
+const { getProfilesByIds } = useCollabs()
+
+const collabs = project.value?.collaborators
+  ? await getProfilesByIds(project.value.collaborators)
+  : []
 </script>
 
 <template>
@@ -41,11 +47,17 @@ await getProject(slug)
         <div class="flex">
           <Avatar
             class="-mr-4 transition-transform border border-primary hover:scale-110"
-            v-for="collab in project.collaborators"
-            :key="collab"
+            v-for="collab in collabs"
+            :key="collab.id"
           >
-            <RouterLink class="flex items-center justify-center w-full h-full" to="">
-              <AvatarImage src="" alt="" />
+            <RouterLink
+              class="flex items-center justify-center w-full h-full"
+              :to="{
+                name: '/users/[username]',
+                params: { username: collab.username },
+              }"
+            >
+              <AvatarImage :src="collab.avatar_url || ''" alt="" />
               <AvatarFallback> </AvatarFallback>
             </RouterLink>
           </Avatar>
@@ -68,8 +80,20 @@ await getProject(slug)
           </TableHeader>
           <TableBody>
             <TableRow v-for="task in project.tasks" :key="task.id">
-              <TableCell> {{ task.name }}</TableCell>
-              <TableCell> {{ task.status }} </TableCell>
+              <TableCell class="p-0">
+                <RouterLink
+                  class="block p-4 text-left hover:bg-muted"
+                  :to="{
+                    name: '/tasks/[id]',
+                    params: { id: task.id },
+                  }"
+                >
+                  {{ task.name }}
+                </RouterLink>
+              </TableCell>
+              <TableCell>
+                <AppInPlaceEditStatus readonly :model-value="task.status" />
+              </TableCell>
               <TableCell> {{ task.status }} </TableCell>
             </TableRow>
           </TableBody>
