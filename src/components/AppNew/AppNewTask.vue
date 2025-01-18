@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { CreateNewTask } from '@/types/CreateNewForm'
-import { profilesQuery, projectsQuery } from '@/utils/supaQueries'
+import { createNewTaskQuery, profilesQuery, projectsQuery } from '@/utils/supaQueries'
 
 const sheetOpen = defineModel<boolean>()
 
@@ -47,12 +47,21 @@ async function getOptions() {
 
 getOptions()
 
+const { profile } = storeToRefs(useAuthStore())
+
 async function createTask(formData: CreateNewTask) {
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(console.log(formData))
-    }, 2000)
-  })
+  const task = {
+    ...formData,
+    collaborators: [profile.value!.id],
+  }
+
+  const { error } = await createNewTaskQuery(task)
+
+  if (error) {
+    console.log(error)
+  }
+
+  sheetOpen.value = false
 }
 </script>
 
@@ -63,15 +72,39 @@ async function createTask(formData: CreateNewTask) {
         <SheetTitle>Create new task</SheetTitle>
       </SheetHeader>
 
-      <FormKit type="form" @submit="createTask" submit-label="Create Task">
-        <FormKit type="text" name="name" id="name" label="Name" placeholder="My new task" />
+      <FormKit
+        type="form"
+        @submit="createTask"
+        submit-label="Create Task"
+        :config="{
+          validationVisibility: 'submit',
+        }"
+      >
+        <FormKit
+          type="text"
+          name="name"
+          id="name"
+          label="Name"
+          placeholder="My new task"
+          validation="required|length:1,255"
+        />
         <FormKit
           type="select"
-          name="for"
-          id="for"
-          label="For"
+          name="profile_id"
+          id="profile_id"
+          label="User"
           placeholder="Select a user"
           :options="selectOptions.profiles"
+          validation="required"
+        />
+        <FormKit
+          type="select"
+          name="project_id"
+          id="project_id"
+          label="Porject"
+          placeholder="Select a project"
+          :options="selectOptions.projects"
+          validation="required"
         />
         <FormKit
           type="textarea"
@@ -79,14 +112,7 @@ async function createTask(formData: CreateNewTask) {
           id="description"
           label="Description"
           placeholder="Task description"
-        />
-        <FormKit
-          type="select"
-          name="project"
-          id="project"
-          label="Porject"
-          placeholder="Select a project"
-          :options="selectOptions.projects"
+          validation="length:0,500"
         />
       </FormKit>
     </SheetContent>

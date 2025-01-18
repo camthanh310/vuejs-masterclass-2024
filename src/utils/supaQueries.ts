@@ -1,5 +1,6 @@
 import type { QueryData } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabaseClient'
+import type { CreateNewTask } from '@/types/CreateNewForm'
 
 export const tasksWithProjectsQuery = supabase.from('tasks').select(`
   *,
@@ -8,6 +9,11 @@ export const tasksWithProjectsQuery = supabase.from('tasks').select(`
     name,
     slug
   )`)
+
+export const createNewTaskQuery = (newTask: CreateNewTask) => {
+  return supabase.from('tasks').insert(newTask)
+}
+
 export type TasksWithProjects = QueryData<typeof tasksWithProjectsQuery>
 
 export const projectsQuery = supabase.from('projects').select()
