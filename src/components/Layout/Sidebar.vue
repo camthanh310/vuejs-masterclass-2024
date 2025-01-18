@@ -33,6 +33,8 @@ const accountLinks = [
 
 const router = useRouter()
 
+defineEmits(['task-clicked'])
+
 async function executeAction(linkTitle: string) {
   if (linkTitle === 'Sign Out') {
     const { logout } = await import('@/utils/supaAuth')
@@ -54,9 +56,17 @@ async function executeAction(linkTitle: string) {
         <iconify-icon icon="lucide:menu"></iconify-icon>
       </Button>
 
-      <Button variant="outline" size="icon" class="size-8">
-        <iconify-icon icon="lucide:plus"></iconify-icon>
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="outline" size="icon" class="size-8">
+            <iconify-icon icon="lucide:plus"></iconify-icon>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem @click="$emit('task-clicked')"> Task </DropdownMenuItem>
+          <DropdownMenuItem>Project</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
 
     <nav class="relative flex flex-col justify-between h-full gap-2">
