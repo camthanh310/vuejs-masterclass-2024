@@ -1,9 +1,19 @@
 <script lang="ts" setup>
+import { menuKey } from '@/utils/injectionKeys'
+
 const { pageData } = storeToRefs(usePageStore())
 
 const taskSheetOpen = ref(false)
 
-const { menuOpen } = useMenu()
+const menuOpen = ref(false)
+function toggleMenu() {
+  menuOpen.value = !menuOpen.value
+}
+
+provide(menuKey, {
+  menuOpen,
+  toggleMenu,
+})
 </script>
 
 <template>
